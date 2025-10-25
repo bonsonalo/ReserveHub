@@ -39,9 +39,6 @@ class User(Base):
         UUID(as_uuid=True),
         ForeignKey("roles.id", ondelete="CASCADE")
     )
-    roles: Mapped["Role"]= relationship(
-        back_populates= "users"
-    )
     created_at: Mapped[datetime]= mapped_column(
         TIMESTAMP(timezone=True),
         server_default=func.now()
@@ -54,4 +51,7 @@ class User(Base):
     archived: Mapped[bool]= mapped_column(
         Boolean,
         default= False
+    )
+    roles: Mapped["Role"]= relationship(
+        back_populates= "users"
     )
