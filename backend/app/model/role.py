@@ -1,8 +1,9 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 import uuid
 from sqlalchemy import String, Integer, TIMESTAMP, UUID
 
 from backend.app.core.database import Base
+from backend.app.model.user import User
 
 class Role(Base):
     __tablename__= "roles"
@@ -16,4 +17,8 @@ class Role(Base):
     name: Mapped[str]= mapped_column(
         unique= True,
         nullable=False
+    )
+    users: Mapped["User"]= relationship(
+        back_populates="roles",
+        cascade="all, delete-orphan"
     )
