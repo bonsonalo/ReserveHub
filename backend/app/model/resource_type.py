@@ -1,5 +1,6 @@
+from importlib.resources import Resource
 from sqlalchemy import Integer, Boolean, String, TIMESTAMP, UUID, text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 import uuid
 from backend.app.core.database import Base
@@ -24,4 +25,8 @@ class ResourceType(Base):
     metadata: Mapped[dict[str, Any]]= mapped_column(
         JSONB,
         server_default= text('{}::jsonb')
+    )
+    resources: Mapped[list["Resource"]]= relationship(
+        back_populates= "resource_types",
+        cascade="save-update"
     )
