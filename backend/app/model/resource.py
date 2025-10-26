@@ -5,9 +5,9 @@ from backend.app.core.database import Base
 from typing import Any
 from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime
-
+from .resource_availability import ResourceAvailability
 from backend.app.model.resource_type import ResourceType
-
+from .booking import Booking
 
 class Resource(Base):
     __tablename__= "resources"
@@ -50,5 +50,13 @@ class Resource(Base):
     )
     resource_types: Mapped["ResourceType"]= relationship(
         back_populates= "resources"
+    )
+    resource_availabilty: Mapped[list[ResourceAvailability]]= relationship(
+        cascade= "all, delete-orphan",
+        back_populates= "resources"
+    )
+    bookings: Mapped[list["Booking"]]= relationship(
+        back_populates= "resources",
+        cascade= "save-update"
     )
     
