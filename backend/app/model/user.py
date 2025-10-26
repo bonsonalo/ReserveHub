@@ -3,6 +3,7 @@ from backend.app.core.database import Base
 import uuid
 from sqlalchemy import UUID, String, Integer, Boolean, ForeignKey, TIMESTAMP, func
 from typing import Optional
+from .associations import user_roles
 
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -35,10 +36,6 @@ class User(Base):
     phone: Mapped[str]= mapped_column(
         String
     )
-    role_id: Mapped[uuid.UUID]= mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("roles.id", ondelete="CASCADE")
-    )
     created_at: Mapped[datetime]= mapped_column(
         TIMESTAMP(timezone=True),
         server_default=func.now()
@@ -52,6 +49,7 @@ class User(Base):
         Boolean,
         default= False
     )
-    roles: Mapped["Role"]= relationship(
+    roles: Mapped["list[Role]"]= relationship(
+        secondary= user_roles,
         back_populates= "users"
     )
