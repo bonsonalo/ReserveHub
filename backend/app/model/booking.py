@@ -82,9 +82,6 @@ class Booking(Base):
     users: Mapped["User | None"]= relationship(
         back_populates= "bookings"
     )
-    user: Mapped["User | None"]= relationship(
-        back_populates= "booking"
-    )
     booking_event: Mapped[list["BookingEvent"]]= relationship(
         back_populates= "booking",
         cascade= "all, delete-orphan"
