@@ -53,3 +53,31 @@ def create_access_token(email: EmailStr, user_id: int, role: str, token_type: st
     encode.update({"exp": expires})
 
     return jwt.encode(encode, SECRET_KEY, algorithm= ALGORITHM)
+
+
+
+async def promote_user_service(user_id: int, new_role:str, db: AsyncSession):
+    user= await db.scalar(select(User).where(User.id == user_id))
+
+    if not user:
+        logger.error("the user doesnt exist")
+        return None
+    user.role= new_role
+    await db.commit()
+    logger.info("successfully updated the role")
+    await db.refresh(user)
+
+
+def refresh_access_token_service(refresh_token: str):
+    payload= jwt.decode(refresh_token, SECRET_KEY, algorithms= [ALGORITHM])
+
+    if payload.get("token_type") != "refresh":
+        logger.error("invalid token type")
+        return False
+    email= payload.get("sub")
+    user_id= payload.get("id")
+    role= payload.get("role")
+
+
+    new_access_token= create_access_token(email, user_id, role, "access", timedelta(min= 20))
+    return {"access_token": new_access_token, "token_type": "bearer"} 
