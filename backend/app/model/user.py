@@ -6,12 +6,12 @@ from typing import Optional
 
 from backend.app.model.booking import Booking
 from backend.app.model.booking_event import BookingEvent
-from .associations import user_roles
+
 
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.app.model.role import Role
+
 
 
 
@@ -29,7 +29,7 @@ class User(Base):
         unique=True,
         nullable= False
     )
-    password_hash: Mapped[str]= mapped_column(
+    hashed_password: Mapped[str]= mapped_column(
         String,
         nullable=False
     )
@@ -52,9 +52,9 @@ class User(Base):
         Boolean,
         default= False
     )
-    roles: Mapped["list[Role]"]= relationship(
-        secondary= user_roles,
-        back_populates= "users"
+    role: Mapped[str]= mapped_column(
+        String,
+        default= "user"
     )
     bookings: Mapped[list[Booking]]= relationship(
         back_populates= "users",
