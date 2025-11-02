@@ -50,8 +50,7 @@ class Booking(Base):
     )
     created_by: Mapped[uuid.UUID]= mapped_column(
         UUID(as_uuid= True),
-        ForeignKey("users.id", ondelete= "SET NULL"),
-        server_default= uuid.uuid4
+        ForeignKey("users.id", ondelete= "SET NULL")
     )
     created_at: Mapped[datetime]= mapped_column(
         TIMESTAMP(timezone= True),
