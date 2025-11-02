@@ -5,7 +5,7 @@ from typing import Any
 import uuid
 from sqlalchemy.dialects.postgresql import JSONB
 from backend.app.core.database import Base
-from datetime import datetime
+from datetime import datetime, time, date
 
 class ResourceAvailability(Base):
     __tablename__= "resource_availability"
@@ -25,13 +25,21 @@ class ResourceAvailability(Base):
         JSONB,
         server_default= text('{}::jsonb')
     )
-    start_date: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True),
+    start_date: Mapped[date] = mapped_column(
+        date,
         nullable=False
     )
-    end_date: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True),
+    end_date: Mapped[date] = mapped_column(
+        date,
         nullable=False
+    )
+    start_time: Mapped[time]= mapped_column(
+        time,
+        nullable= False
+    )
+    end_time= Mapped[time]= mapped_column(
+        time,
+        nullable= False
     )
     tz: Mapped[str]= mapped_column(
         String,
