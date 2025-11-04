@@ -84,7 +84,7 @@ async def get_all_resources_service(db: AsyncSession,
 
 
 async def create_resource_service(info: resource_schema.CreateResource, db: AsyncSession):
-    type_connect= db.scalar(select(ResourceType).where(info.type_id == ResourceType.id))
+    type_connect= await db.scalar(select(ResourceType).where(info.type_id == ResourceType.id))
 
     if not type_connect:
         return ValueError("Resource type does not exist")
@@ -104,7 +104,7 @@ async def create_resource_service(info: resource_schema.CreateResource, db: Asyn
 
 
 async def get_resource_by_id_service(id: UUID, db: AsyncSession):
-    resource= db.scalar(select(Resource).where(Resource.id == id))
+    resource= await db.scalar(select(Resource).where(Resource.id == id))
     resource_exist(resource)
 
     return resource
@@ -112,8 +112,8 @@ async def get_resource_by_id_service(id: UUID, db: AsyncSession):
 
 
 
-async def update_resource(id: int, updated_to: resource_schema.UpdateResource, db: AsyncSession):
-    queried= db.scalar(select(Resource).where(Resource.id == id))
+async def update_resource(id: UUID, updated_to: resource_schema.UpdateResource, db: AsyncSession):
+    queried= await db.scalar(select(Resource).where(Resource.id == id))
     resource_exist(queried)
     if updated_to.type_id is not None:
         queried.type_id = updated_to.type_id
@@ -129,4 +129,12 @@ async def update_resource(id: int, updated_to: resource_schema.UpdateResource, d
     await db.refresh(queried)
     return queried
     
+
+
+
+async def delete_resource_service(id: UUID, db: AsyncSession):
+    to_delete= await db.scalar(select(Resource).where(Resource.id == id))
+    resource_exist(to_delete)
+    await db.delete(to_delete)
+    await db.commit()
 
