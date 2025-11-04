@@ -1,6 +1,6 @@
 from fastapi import Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import and_, exists, func, not_, select
+from sqlalchemy import UUID, and_, exists, func, not_, select
 
 
 from backend.app.model.booking import Booking
@@ -8,6 +8,8 @@ from backend.app.model.resource import Resource
 from backend.app.model.resource_availability import ResourceAvailability
 from backend.app.model.resource_type import ResourceType
 from backend.app.core.logger import logger
+from backend.app.schema import resource_schema
+from backend.app.utils import resource_exist
 
 
 
@@ -77,4 +79,54 @@ async def get_all_resources_service(db: AsyncSession,
         return LookupError("no products found")
     logger.info(f"fetched {len(final_resources)} resources successfully")
     return final_resources
+
+
+
+
+async def create_resource_service(info: resource_schema.CreateResource, db: AsyncSession):
+    type_connect= db.scalar(select(ResourceType).where(info.type_id == ResourceType.id))
+
+    if not type_connect:
+        return ValueError("Resource type does not exist")
+    db_add= Resource(
+        type_id= type_connect.id,
+        code = info.code,
+        name = info.name,
+        capacity = info.capacity,
+        location= info.location,
+        attributes= info.attributes
+    )
+    db.add(db_add)
+    await db.commit()
+    await db.refresh(db_add)
+    return db_add
+
+
+
+async def get_resource_by_id_service(id: UUID, db: AsyncSession):
+    resource= db.scalar(select(Resource).where(Resource.id == id))
+    resource_exist(resource)
+
+    return resource
+
+
+
+
+async def update_resource(id: int, updated_to: resource_schema.UpdateResource, db: AsyncSession):
+    queried= db.scalar(select(Resource).where(Resource.id == id))
+    resource_exist(queried)
+    if updated_to.type_id is not None:
+        queried.type_id = updated_to.type_id
+    if updated_to.code is not None:
+        queried.code = updated_to.code
+    if updated_to.name is not None:
+        queried.name = updated_to.name
+    if updated_to.capacity is not None:
+        queried.capacity = updated_to.capacity
+
+
+    await db.commit()
+    await db.refresh(queried)
+    return queried
+    
 
