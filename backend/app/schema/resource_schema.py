@@ -1,11 +1,12 @@
 from typing import Optional
 from pydantic import BaseModel, Field
+from sqlalchemy import UUID
 from sqlalchemy.dialects.postgresql import JSONB
 
 
 
 class CreateResource(BaseModel):
-    type_id: id
+    type_id: UUID
     code: str
     name: str
     capacity: Optional[int]
