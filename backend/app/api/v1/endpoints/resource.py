@@ -22,6 +22,16 @@ router= APIRouter(
 )
 
 
+# create resource
+@router.post("/create", status_code=status.HTTP_201_CREATED)
+async def create_resource(info: resource_schema.Resource, current_user: admin_dependency, db: db_dependency):
+    authenticate_user(current_user)
+    try:
+        return await create_resource_service(info, db)
+    except ValueError as e:
+        logger.error(str(e))
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
+    
 
 # filter by type, capacity, availablity
 @router.get("/get_all", status.HTTP_200_OK)
@@ -30,8 +40,8 @@ async def get_all_resources(db: db_dependency,
                             sort_by: str= Query("id"),
                             order: str= Query("asc"),
                             capacity: Optional[str]= Query(None),
-                            resource_type: Optional[str]= Query(None),
-                            available: Optional[str]= Query(None)                           
+                            resource_type: Optional[resource_schema.ResourceType]= Query(None),
+                            available: Optional[bool]= Query(False)                           
                             ):
     authenticate_user(current_user)
     try:
@@ -53,16 +63,7 @@ async def get_all_resources(db: db_dependency,
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail= str(e))
     
 
-# create resource
-@router.post("/create", status_code=status.HTTP_201_CREATED)
-async def create_resource(info: resource_schema.Resource, current_user: admin_dependency, db: db_dependency):
-    authenticate_user(current_user)
-    try:
-        return await create_resource_service(info, db)
-    except ValueError as e:
-        logger.error(str(e))
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
-    
+
 
 # get resource by id
 @router.get("/get/{id}", status_code=status.HTTP_200_OK)
