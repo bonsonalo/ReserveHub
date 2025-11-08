@@ -1,5 +1,5 @@
 from .resource import Resource
-from sqlalchemy import Integer, String, Boolean, UUID, func, ForeignKey, text, TIMESTAMP
+from sqlalchemy import String, Boolean, UUID, func, ForeignKey, text, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Any
 import uuid
