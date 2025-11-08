@@ -6,7 +6,6 @@ from sqlalchemy import UUID, and_, exists, func, not_, select
 from backend.app.model.booking import Booking
 from backend.app.model.resource import Resource
 from backend.app.model.resource_availability import ResourceAvailability
-from backend.app.model.resource_type import ResourceType
 from backend.app.core.logger import logger
 from backend.app.schema import resource_schema
 from backend.app.utils import resource_exist
@@ -19,7 +18,7 @@ async def get_all_resources_service(db: AsyncSession,
                                     sort_by: str,
                                     order: str,
                                     capacity: str | None,
-                                    resource_type: str | None,
+                                    resource_type: resource_schema.ResourceType | None,
                                     available: bool= Query(False)                                    
                                     ):
     
@@ -29,11 +28,7 @@ async def get_all_resources_service(db: AsyncSession,
         query = query.where(Resource.capacity == capacity)
 
     if resource_type:
-        type = await db.scalar(select(ResourceType).where(ResourceType.name == resource_type))
-        if not type:
-            logger.error("No resource type by that name")
-            raise ValueError("No resource type by that error")
-        query = query.where(Resource.type_id == type.id)
+        query = query.where(Resource.type == resource_type)
     if available:
         now = func.now()
         current_date= func.current_date()
@@ -51,7 +46,7 @@ async def get_all_resources_service(db: AsyncSession,
         )
         has_active_booking= exists().where(
             Booking.resource_id == Resource.id,
-            Booking.status.notin_(["deleted", "cancelled"]),
+            Booking.status.notin_(["deleted", "cancelled", "booked"]),
             Booking.time_range.op("@>")(now)
         )
 
@@ -84,12 +79,8 @@ async def get_all_resources_service(db: AsyncSession,
 
 
 async def create_resource_service(info: resource_schema.CreateResource, db: AsyncSession):
-    type_connect= await db.scalar(select(ResourceType).where(info.type_id == ResourceType.id))
-
-    if not type_connect:
-        return ValueError("Resource type does not exist")
     db_add= Resource(
-        type_id= type_connect.id,
+        type= info.type,
         code = info.code,
         name = info.name,
         capacity = info.capacity,
@@ -137,4 +128,3 @@ async def delete_resource_service(id: UUID, db: AsyncSession):
     resource_exist(to_delete)
     await db.delete(to_delete)
     await db.commit()
-
