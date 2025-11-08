@@ -6,9 +6,12 @@ from typing import Any
 from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime
 from .resource_availability import ResourceAvailability
-from backend.app.model.resource_type import ResourceType
 from .booking import Booking
+from sqlalchemy import Enum as sqlEnum
 
+
+
+from backend.app.schema.resource_schema import ResourceType
 class Resource(Base):
     __tablename__= "resources"
 
@@ -17,12 +20,12 @@ class Resource(Base):
         primary_key= True,
         default= uuid.uuid4
     )
-    type_id: Mapped[uuid.UUID | None]= mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("resource_types.id", ondelete="SET NULL")
-    )
     code: Mapped[str]= mapped_column(
         String,
+        unique=True
+    )
+    type: str = mapped_column(     # use Enum for this: room, library, hall
+        sqlEnum(ResourceType, name= "resource_type", create_type= True),
         unique=True
     )
     name: Mapped[str]= mapped_column(
@@ -47,9 +50,6 @@ class Resource(Base):
         DATETIME,
         server_default= func.now(),
         onupdate= func.now()
-    )
-    resource_types: Mapped["ResourceType"]= relationship(
-        back_populates= "resources"
     )
     resource_availabilty: Mapped[list[ResourceAvailability]]= relationship(
         cascade= "all, delete-orphan",
