@@ -1,6 +1,6 @@
 from datetime import timedelta
-from fastapi import Depends, FastAPI, APIRouter, HTTPException
-from sqlalchemy import select
+from fastapi import Depends, APIRouter, HTTPException
+
 from starlette import status
 from passlib.context import CryptContext
 from typing import Annotated
@@ -9,21 +9,18 @@ from jose import ExpiredSignatureError, JWTError
 
 
 from backend.app.schema.auth_schema import CreateUserRequest, Token
-from backend.app.core.config import db_dependency, user_dependency, admin_dependency, superadmin_dependency
+from backend.app.core.config import db_dependency, superadmin_dependency
 from backend.app.service.auth_service import create_access_token, create_user_service, authenticate_user, promote_user_service, refresh_access_token_service
-from backend.app.utils.password_strength import validate_password_strength
-from backend.app.model.user import User
 from backend.app.core.logger import logger
 
 
 
 router = APIRouter(
     prefix= "/auth",
-    tags= "auth"
+    tags= ["auth"]
 )
 
 
-# bcrypt_context= CryptContext(schemes= ["bcrypt"], deprecated= "auto")
 
 # sign up
 @router.post("/signup", status_code= status.HTTP_201_CREATED)
