@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, Query, HTTPException
-from sqlalchemy.dialects.postgresql import UUID
+from uuid import UUID
 from starlette import status
 
 from backend.app.model.resource import Resource
@@ -24,7 +24,7 @@ router= APIRouter(
 
 # create resource
 @router.post("/create", status_code=status.HTTP_201_CREATED)
-async def create_resource(info: resource_schema.Resource, current_user: admin_dependency, db: db_dependency):
+async def create_resource(info: resource_schema.CreateResource, current_user: admin_dependency, db: db_dependency):
     authenticate_user(current_user)
     try:
         return await create_resource_service(info, db)
@@ -34,7 +34,7 @@ async def create_resource(info: resource_schema.Resource, current_user: admin_de
     
 
 # filter by type, capacity, availablity
-@router.get("/get_all", status.HTTP_200_OK)
+@router.get("/get_all", status_code= status.HTTP_200_OK)
 async def get_all_resources(db: db_dependency,
                             current_user: user_dependency,
                             sort_by: str= Query("id"),
@@ -66,7 +66,7 @@ async def get_all_resources(db: db_dependency,
 
 
 # get resource by id
-@router.get("/get/{id}", status_code=status.HTTP_200_OK)
+@router.get("/get/{id}", response_model= resource_schema.ReturnResourceById, status_code=status.HTTP_200_OK)
 async def get_resource_by_id(id: UUID, current_user: user_dependency, db: db_dependency):
     authenticate_user(current_user)
     try:
