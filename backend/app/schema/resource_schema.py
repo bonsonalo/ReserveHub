@@ -11,6 +11,13 @@ class ResourceType(str, Enum):
     library= "library"
     
 
+class ReturnResourceById(BaseModel):
+    type: ResourceType
+    code: str
+    name: str
+    capacity: Optional[int]
+    location: str
+    attributes: Optional[dict[str, Any]]
 
 class CreateResource(BaseModel):
     type: ResourceType
