@@ -1,11 +1,8 @@
 from datetime import datetime
 from backend.app.core.database import Base
 import uuid
-from sqlalchemy import UUID, String, Integer, Boolean, ForeignKey, TIMESTAMP, func
-from typing import Optional
+from sqlalchemy import UUID, String, Boolean, TIMESTAMP, func
 
-from backend.app.model.booking import Booking
-from backend.app.model.booking_event import BookingEvent
 
 
 
@@ -56,8 +53,8 @@ class User(Base):
         String,
         default= "user"
     )
-    bookings: Mapped[list[Booking]]= relationship(
-        back_populates= "users",
+    bookings: Mapped[list["Booking"]]= relationship(
+        back_populates= "user",
         cascade= "save-update"
     )
     booking_event: Mapped[list["BookingEvent"]]= relationship(
