@@ -1,5 +1,4 @@
-from .resource import Resource
-from sqlalchemy import String, Boolean, UUID, func, ForeignKey, text, TIMESTAMP
+from sqlalchemy import String, Boolean, UUID, func, ForeignKey, text, TIMESTAMP, DATE, TIME
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Any
 import uuid
@@ -15,30 +14,30 @@ class ResourceAvailability(Base):
     id: Mapped[uuid.UUID]= mapped_column(
         UUID(as_uuid= True),
         primary_key= True,
-        server_default= uuid.uuid4
+        default= uuid.uuid4
     )
     resource_id: Mapped[uuid.UUID]= mapped_column(
         UUID(as_uuid= True),
         ForeignKey("resources.id", ondelete="CASCADE")
     )
-    recurrence: Mapped[list[dict, Any]]= mapped_column(
+    recurrence: Mapped[list[dict[str, Any]]]= mapped_column(
         JSONB,
-        server_default= text('{}::jsonb')
+        default= text('{}::jsonb')
     )
-    start_date: Mapped[date] = mapped_column(
-        date,
+    start_date: Mapped[DATE] = mapped_column(
+        DATE,
         nullable=False
     )
     end_date: Mapped[date] = mapped_column(
-        date,
+        DATE,
         nullable=False
     )
     start_time: Mapped[time]= mapped_column(
-        time,
+        TIME,
         nullable= False
     )
-    end_time= Mapped[time]= mapped_column(
-        time,
+    end_time: Mapped[time]= mapped_column(
+        TIME,
         nullable= False
     )
     tz: Mapped[str]= mapped_column(
@@ -52,5 +51,5 @@ class ResourceAvailability(Base):
     )
 
     resources: Mapped["Resource"]= relationship(
-        back_populates= "resource_availabilty"
+        back_populates= "resource_availability"
     )
