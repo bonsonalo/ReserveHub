@@ -2,11 +2,7 @@ from sqlalchemy import Boolean, Integer, ForeignKey, String, func, UUID, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import uuid
 from backend.app.core.database import Base
-from backend.app.model.booking_event import BookingEvent
-from backend.app.model.email import Email
-from .resource import Resource
-from .user import User
-from sqlalchemy.dialects.postgresql import TSTZRANGE, JSONB, TIMESTAMP
+from sqlalchemy.dialects.postgresql import TSTZRANGE, JSONB, TIMESTAMP, Range
 from datetime import datetime
 from typing import Any
 
@@ -19,7 +15,7 @@ class Booking(Base):
     id: Mapped[uuid.UUID]= mapped_column(
         UUID(as_uuid= True),
         primary_key=True,
-        server_default= uuid.uuid4
+        default= uuid.uuid4
     )
     resource_id: Mapped[uuid.UUID]= mapped_column(
         UUID(as_uuid=True),
@@ -28,7 +24,7 @@ class Booking(Base):
     )
     user_id: Mapped[uuid.UUID]= mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("User.id", ondelete= "SET NULL")
+        ForeignKey("users.id", ondelete= "SET NULL")
     )
     status: Mapped[str]= mapped_column(
         String,
@@ -36,7 +32,7 @@ class Booking(Base):
         default= "pending",
         server_default= text("'pending'")
     )
-    time_range: Mapped[tuple[datetime, datetime]]= mapped_column(
+    time_range: Mapped[Range[datetime]]= mapped_column(
         TSTZRANGE,
         nullable= False
     )
@@ -46,7 +42,7 @@ class Booking(Base):
     )
     data: Mapped[dict[str, Any]]= mapped_column(
         JSONB,
-        server_default= text('{}::jsonb')   
+        server_default= text("'{}'::jsonb")   
     )
     created_by: Mapped[uuid.UUID]= mapped_column(
         UUID(as_uuid= True),
@@ -78,7 +74,7 @@ class Booking(Base):
     resources: Mapped["Resource | None"]= relationship(
         back_populates= "bookings"
     )
-    users: Mapped["User | None"]= relationship(
+    user: Mapped["User | None"]= relationship(
         back_populates= "bookings"
     )
     booking_event: Mapped[list["BookingEvent"]]= relationship(
