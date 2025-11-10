@@ -3,7 +3,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 import uuid
 from datetime import datetime
 from backend.app.core.database import Base
-from backend.app.model.booking import Booking
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 
 class Email(Base):
@@ -14,12 +13,12 @@ class Email(Base):
     id: Mapped[uuid.UUID]= mapped_column(
         UUID(as_uuid=True),
         primary_key= True,
-        server_default= uuid.uuid4
+        default= uuid.uuid4
     )
     booking_id: Mapped[uuid.UUID]= mapped_column(
         UUID(as_uuid= True),
         ForeignKey("bookings.id", ondelete= "CASCADE"),
-        server_default= uuid.uuid4
+        default= uuid.uuid4
     )
     to_email: Mapped[str]= mapped_column(
         String
