@@ -1,12 +1,10 @@
-from sqlalchemy import DATETIME, Integer, Boolean, String, ForeignKey, UUID, func, text
+from sqlalchemy import Integer, Boolean, String, ForeignKey, UUID, func, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import uuid
 from backend.app.core.database import Base
 from typing import Any
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from datetime import datetime
-from .resource_availability import ResourceAvailability
-from .booking import Booking
 from sqlalchemy import Enum as sqlEnum
 
 
@@ -24,7 +22,7 @@ class Resource(Base):
         String,
         unique=True
     )
-    type: str = mapped_column(     # use Enum for this: room, library, hall
+    type: Mapped["ResourceType"]= mapped_column(
         sqlEnum(ResourceType, name= "resource_type", create_type= True),
         unique=True
     )
@@ -38,20 +36,20 @@ class Resource(Base):
     location: Mapped[str]= mapped_column(
         String
     )
-    attributes: Mapped[list[dict, Any]]= mapped_column(
+    attributes: Mapped[dict[str, Any]]= mapped_column(
         JSONB,
-        server_default= text('{}::jsonb')
+        server_default= text("'{}'::jsonb")
     )
     created_at: Mapped[datetime]= mapped_column(
-        DATETIME,
+        TIMESTAMP,
         server_default= func.now()
     )
     updated_at: Mapped[datetime]= mapped_column(
-        DATETIME,
+        TIMESTAMP,
         server_default= func.now(),
         onupdate= func.now()
     )
-    resource_availabilty: Mapped[list[ResourceAvailability]]= relationship(
+    resource_availability: Mapped[list["ResourceAvailability"]]= relationship(
         cascade= "all, delete-orphan",
         back_populates= "resources"
     )
