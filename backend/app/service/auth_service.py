@@ -21,10 +21,17 @@ bcrypt_context= CryptContext(schemes= ["bcrypt"], deprecated= "auto")
 async def create_user_service(user: CreateUserRequest, db: AsyncSession):
     try:
         validated_password= validate_password_strength(user.password)
-        new_user= await is_new_email(user, db)
+        existing_user= await db.scalar(select(User).where(User.email == user.email))
+        if existing_user:
+            raise ValueError("Email already registered")
     except ValueError as e:
+        await db.rollback()
         logger.error(str(e))
-        return {"error": str(e)}
+        raise
+    except Exception as e:
+        await db.rollback()
+        logger.error(str(e))
+        raise
     user_request_model= User(
         email= user.email,
         hashed_password= bcrypt_context.hash(user.password),
