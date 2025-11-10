@@ -75,7 +75,12 @@ class Booking(Base):
         back_populates= "bookings"
     )
     user: Mapped["User | None"]= relationship(
-        back_populates= "bookings"
+        back_populates= "bookings",
+        foreign_keys= "[Booking.user_id]"
+    )
+    creator: Mapped["User | None"]= relationship(
+        back_populates= "created_bookings",
+        foreign_keys= "[Booking.created_by]"
     )
     booking_event: Mapped[list["BookingEvent"]]= relationship(
         back_populates= "booking",
