@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from starlette import status
-from sqlalchemy import UUID
+from uuid import UUID
 
 
-from backend.app.model.user import User
+
 from backend.app.core.config import user_dependency, admin_dependency, superadmin_dependency, db_dependency
 from backend.app.service.user_service import delete_user_service, get_user_by_id_service, get_user_info_service, get_users_schema, update_profile_service, update_user_service
 from backend.app.core.logger import logger
