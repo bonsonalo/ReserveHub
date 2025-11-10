@@ -29,6 +29,18 @@ class Base(DeclarativeBase):
 
 #database initializaztion
 async def init_db():
+    from backend.app.model import (
+        User,
+        Resource,
+        ResourceAvailability,
+        Email,
+        Booking,
+        BookingEvent
+    )
+
+
+
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all) 
 
