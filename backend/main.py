@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager 
 
 from backend.app.core.database import init_db
+from backend.app.api.v1.routes import routers
 
 
 
@@ -12,3 +13,4 @@ async def lifespan(app: FastAPI):
 
 
 app= FastAPI(title= "Booking API", lifespan= lifespan)
+app.include_router(routers)
