@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Query
-from sqlalchemy import UUID
+from uuid import UUID
 from datetime import date
 from starlette import status 
 
