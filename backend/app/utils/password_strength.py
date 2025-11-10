@@ -1,5 +1,5 @@
 import re
-
+from backend.app.core.logger import logger
 
 
 
@@ -14,3 +14,4 @@ def validate_password_strength(password: str) -> str:
         raise ValueError("Password should contain atleast 1 digit")
     if not re.search(r"[!@#$%^&*(){}/'.,]", password):
         raise ValueError("Password should contain special case letter")
+    logger.info("Password validated")
