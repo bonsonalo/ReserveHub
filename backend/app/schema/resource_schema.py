@@ -8,7 +8,7 @@ from enum import Enum
 class ResourceType(str, Enum):
     room= "room"
     conference= "conference"
-    dining_hall= "library"
+    library= "library"
     
 
 
