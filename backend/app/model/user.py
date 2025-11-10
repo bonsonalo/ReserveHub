@@ -55,6 +55,12 @@ class User(Base):
     )
     bookings: Mapped[list["Booking"]]= relationship(
         back_populates= "user",
+        foreign_keys= "[Booking.user_id]",
+        cascade= "save-update"
+    )
+    created_bookings: Mapped[list["Booking"]]= relationship(
+        back_populates= "creator",
+        foreign_keys= "[Booking.created_by]",
         cascade= "save-update"
     )
     booking_event: Mapped[list["BookingEvent"]]= relationship(
