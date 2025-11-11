@@ -43,7 +43,6 @@ async def get_all_resources(db: db_dependency,
                             resource_type: Optional[resource_schema.ResourceType]= Query(None),
                             available: Optional[bool]= Query(False)                           
                             ):
-    authenticate_user(current_user)
     try:
         return await get_all_resources_service(db,
                                                sort_by,
