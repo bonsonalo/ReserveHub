@@ -106,8 +106,8 @@ async def get_resource_by_id_service(id: UUID, db: AsyncSession):
 async def update_resource_service(id: UUID, updated_to: resource_schema.UpdateResource, db: AsyncSession):
     queried= await db.scalar(select(Resource).where(Resource.id == id))
     resource_exist(queried)
-    if updated_to.type_id is not None:
-        queried.type_id = updated_to.type_id
+    if updated_to.type is not None:
+        queried.type = updated_to.type
     if updated_to.code is not None:
         queried.code = updated_to.code
     if updated_to.name is not None:
