@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from jose import ExpiredSignatureError, JWTError
 
 
-from backend.app.schema.auth_schema import CreateUserRequest, Token
+from backend.app.schema.auth_schema import CreateUserRequest, RefreshTokenRequest, Token
 from backend.app.core.config import db_dependency, superadmin_dependency
 from backend.app.service.auth_service import create_access_token, create_user_service, authenticate_user, promote_user_service, refresh_access_token_service
 from backend.app.core.logger import logger
@@ -60,9 +60,9 @@ async def promote_user(user_id: UUID, new_role: str, db: db_dependency, current_
 # refresh
 
 @router.post("/refresh")
-async def refresh_access_token(refresh_token: str):
+async def refresh_access_token(request: RefreshTokenRequest):
      try:
-          return refresh_access_token_service(refresh_token)
+          return refresh_access_token_service(request.refresh_token)
      except ExpiredSignatureError:
           raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="refresh token expired")
      except JWTError:
