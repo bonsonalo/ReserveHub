@@ -8,7 +8,7 @@ from backend.app.model.resource import Resource
 from backend.app.model.resource_availability import ResourceAvailability
 from backend.app.core.logger import logger
 from backend.app.schema import resource_schema
-from backend.app.utils import resource_exist
+from backend.app.utils.resource_exist import resource_exist
 
 
 
@@ -103,7 +103,7 @@ async def get_resource_by_id_service(id: UUID, db: AsyncSession):
 
 
 
-async def update_resource(id: UUID, updated_to: resource_schema.UpdateResource, db: AsyncSession):
+async def update_resource_service(id: UUID, updated_to: resource_schema.UpdateResource, db: AsyncSession):
     queried= await db.scalar(select(Resource).where(Resource.id == id))
     resource_exist(queried)
     if updated_to.type_id is not None:
