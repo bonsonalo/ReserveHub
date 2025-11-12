@@ -30,10 +30,10 @@ class CreateResource(BaseModel):
 
 
 class UpdateResource(BaseModel):
-    type: Optional[ResourceType]
-    code: Optional[str]
-    name: Optional[str]
-    capacity: Optional[int]
-    location: Optional[str]
-    attributes: Optional[dict[str, Any]]
+    type: Optional[ResourceType]= None
+    code: Optional[str]= None
+    name: Optional[str]= None
+    capacity: Optional[int]= None
+    location: Optional[str]= None
+    attributes: Optional[dict[str, Any]]= None
     
