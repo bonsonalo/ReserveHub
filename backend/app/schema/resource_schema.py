@@ -15,17 +15,17 @@ class ReturnResourceById(BaseModel):
     type: ResourceType
     code: str
     name: str
-    capacity: Optional[int]
+    capacity: Optional[int]= None
     location: str
-    attributes: Optional[dict[str, Any]]
+    attributes: Optional[dict[str, Any]]= None
 
 class CreateResource(BaseModel):
     type: ResourceType
     code: str
     name: str
-    capacity: Optional[int]
+    capacity: Optional[int]= None
     location: str
-    attributes: Optional[dict[str, Any]]
+    attributes: Optional[dict[str, Any]]= None
 
 
 
