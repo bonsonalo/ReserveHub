@@ -82,7 +82,7 @@ async def get_resource_by_id(id: UUID, current_user: user_dependency, db: db_dep
 async def update_resource(id: UUID, updated_to: resource_schema.UpdateResource, current_user: admin_dependency, db: db_dependency):
     authentication_check(current_user)
     try:
-        return await update_resource(id,updated_to, db)
+        return await update_resource_service(id,updated_to, db)
     except Exception as e:
         logger.error(str(e))
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
