@@ -1,4 +1,5 @@
 from datetime import timedelta
+from uuid import UUID
 from fastapi import Depends, APIRouter, HTTPException
 
 from starlette import status
@@ -49,7 +50,7 @@ async def login_for_access_token(user_form: Annotated[OAuth2PasswordRequestForm,
 # to upgrade user
 
 @router.put("/promote/{user_id}")
-async def promote_user(user_id: int, new_role: str, db: db_dependency, current_user: superadmin_dependency):
+async def promote_user(user_id: UUID, new_role: str, db: db_dependency, current_user: superadmin_dependency):
      updated= await promote_user_service(user_id, new_role, db, current_user)
      if not updated:
           raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "user not found")
