@@ -9,6 +9,7 @@ from backend.app.service.auth_service import authenticate_user
 from backend.app.service.resource_service import create_resource_service, delete_resource_service, get_all_resources_service, get_resource_by_id_service
 from backend.app.core.logger import logger
 from backend.app.schema import resource_schema
+from backend.app.utils.authentication_check import authentication_check
 
 
 
@@ -25,7 +26,7 @@ router= APIRouter(
 # create resource
 @router.post("/create", status_code=status.HTTP_201_CREATED)
 async def create_resource(info: resource_schema.CreateResource, current_user: admin_dependency, db: db_dependency):
-    authenticate_user(current_user)
+    authentication_check(current_user)
     try:
         return await create_resource_service(info, db)
     except ValueError as e:
@@ -67,7 +68,7 @@ async def get_all_resources(db: db_dependency,
 # get resource by id
 @router.get("/get/{id}", response_model= resource_schema.ReturnResourceById, status_code=status.HTTP_200_OK)
 async def get_resource_by_id(id: UUID, current_user: user_dependency, db: db_dependency):
-    authenticate_user(current_user)
+    authentication_check(current_user)
     try:
         return await get_resource_by_id_service(id, db)
     except ValueError as e:
@@ -79,7 +80,7 @@ async def get_resource_by_id(id: UUID, current_user: user_dependency, db: db_dep
 # update resource
 @router.patch("/update/{id}")
 async def update_resource(id: UUID, updated_to: resource_schema.UpdateResource, current_user: admin_dependency, db: db_dependency):
-    authenticate_user(current_user)
+    authentication_check(current_user)
     try:
         return await update_resource(id,updated_to, db)
     except Exception as e:
@@ -90,7 +91,7 @@ async def update_resource(id: UUID, updated_to: resource_schema.UpdateResource, 
 # DELETE /api/v1/resources/{id}
 @router.delete("/delete/{id}")
 async def delete_resource(id: UUID, current_user: superadmin_dependency, db: db_dependency):
-    authenticate_user(current_user)
+    authentication_check(current_user)
     try:
         return await delete_resource_service(id,db)
 
