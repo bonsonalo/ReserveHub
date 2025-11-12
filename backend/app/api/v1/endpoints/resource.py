@@ -6,7 +6,7 @@ from starlette import status
 from backend.app.model.resource import Resource
 from backend.app.core.config import user_dependency, admin_dependency, superadmin_dependency, db_dependency
 from backend.app.service.auth_service import authenticate_user
-from backend.app.service.resource_service import create_resource_service, delete_resource_service, get_all_resources_service, get_resource_by_id_service
+from backend.app.service.resource_service import create_resource_service, delete_resource_service, get_all_resources_service, get_resource_by_id_service, update_resource_service
 from backend.app.core.logger import logger
 from backend.app.schema import resource_schema
 from backend.app.utils.authentication_check import authentication_check
