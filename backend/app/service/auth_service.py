@@ -74,6 +74,7 @@ async def promote_user_service(user_id: UUID, new_role:str, db: AsyncSession):
     await db.commit()
     logger.info("successfully updated the role")
     await db.refresh(user)
+    return user
 
 
 def refresh_access_token_service(refresh_token: str):
