@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from uuid import UUID
 import jwt
 from pydantic import EmailStr
 from sqlalchemy import select
@@ -63,7 +64,7 @@ def create_access_token(email: EmailStr, user_id: int, role: str, token_type: st
 
 
 
-async def promote_user_service(user_id: int, new_role:str, db: AsyncSession):
+async def promote_user_service(user_id: UUID, new_role:str, db: AsyncSession):
     user= await db.scalar(select(User).where(User.id == user_id))
 
     if not user:
