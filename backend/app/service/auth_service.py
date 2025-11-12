@@ -88,5 +88,5 @@ def refresh_access_token_service(refresh_token: str):
     role= payload.get("role")
 
 
-    new_access_token= create_access_token(email, user_id, role, "access", timedelta(min= 20))
+    new_access_token= create_access_token(email, user_id, role, "access", timedelta(minutes= 20))
     return {"access_token": new_access_token, "token_type": "bearer"} 
