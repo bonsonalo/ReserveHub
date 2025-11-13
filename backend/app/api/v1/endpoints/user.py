@@ -5,7 +5,7 @@ from uuid import UUID
 
 
 from backend.app.core.config import user_dependency, admin_dependency, superadmin_dependency, db_dependency
-from backend.app.service.user_service import delete_user_service, get_user_by_id_service, get_user_info_service, get_users_schema, update_profile_service, update_user_service
+from backend.app.service.user_service import delete_user_service, get_user_by_id_service, get_user_info_service, get_users_service, update_profile_service, update_user_service
 from backend.app.core.logger import logger
 from backend.app.utils.authentication_check import authentication_check
 from backend.app.schema import user_schema
