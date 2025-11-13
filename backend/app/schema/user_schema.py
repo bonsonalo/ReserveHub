@@ -7,9 +7,9 @@ from datetime import date
 
 
 class UpdateUser(BaseModel):
-    email: Optional[EmailStr]
-    full_name: Optional[str]
-    phone: Optional[str]
+    email: Optional[EmailStr]= None
+    full_name: Optional[str]= None
+    phone: Optional[str]= None
 
 
 class UserResponse(BaseModel):
@@ -20,4 +20,4 @@ class UserResponse(BaseModel):
     updated_at: date
     archived: bool
     role: str
-    
+
