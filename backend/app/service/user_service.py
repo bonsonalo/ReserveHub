@@ -29,7 +29,7 @@ async def get_user_info_service(user_id: UUID, db: AsyncSession):
 
 
 async def update_user_service(id: UUID, user_update: user_schema.UpdateUser, db: AsyncSession):
-    user= db.scalar(select(User).where(User.id == id))
+    user= await db.scalar(select(User).where(User.id == id))
     if not user:
         raise LookupError("Couldnot find the user with that id")
     if user_update.email is not None:
@@ -68,9 +68,10 @@ async def update_profile_service(id: UUID, to_update: user_schema.UpdateUser, db
     return user
     
 async def delete_user_service(id, db):
-    user= db.scalar(select(User).where(User.id == id))
+    user= await db.scalar(select(User).where(User.id == id))
     if not user:
         raise ValueError("could not find user with that id")
-    User.archived = True
+    user.archived = True
+    logger.info("sunccessfully archived")
     await db.commit()
     logger.info("soft delete successfull")
