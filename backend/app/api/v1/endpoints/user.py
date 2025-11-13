@@ -17,7 +17,7 @@ router= APIRouter(
 
 
 
-@router.get("/get_all", response_model= user_schema.UserResponse, status_code= status.HTTP_200_OK)
+@router.get("/get_all", response_model= list[user_schema.UserResponse], status_code= status.HTTP_200_OK)
 async def get_users(current_user: admin_dependency, db: db_dependency):
     authentication_check(current_user)
     try:
