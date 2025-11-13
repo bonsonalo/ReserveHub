@@ -11,8 +11,9 @@ from backend.app.schema import user_schema
 
 async def get_users_service(db: AsyncSession):
     user= await db.scalars(select(User))
+    final = user.all()
 
-    if not user:
+    if not final:
         logger.error("user not found")
         raise LookupError("user not found")
     logger.info("successfully displayed the user")
