@@ -21,7 +21,7 @@ router= APIRouter(
 async def get_users(current_user: admin_dependency, db: db_dependency):
     authentication_check(current_user)
     try:
-        return await get_users_schema(db)
+        return await get_users_service(db)
     except ValueError as e:
         logger.error(str(e))
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail= str(e))
