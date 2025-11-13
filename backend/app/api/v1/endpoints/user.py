@@ -44,7 +44,7 @@ async def get_user_info(current_user: user_dependency, db: db_dependency):
         HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "user not found")
 
 @router.patch("/update", status_code=status.HTTP_200_OK)
-async def update_user(id: int, user: user_schema.UpdateUser, current_user: superadmin_dependency, db: db_dependency):
+async def update_user(id: UUID, user: user_schema.UpdateUser, current_user: superadmin_dependency, db: db_dependency):
     authentication_check(current_user)
     try:
         return await update_user_service(id, user, db)
