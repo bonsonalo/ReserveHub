@@ -51,6 +51,8 @@ async def update_user(id: UUID, user: user_schema.UpdateUser, current_user: supe
     except LookupError as e:
         logger.error(str(e))
         HTTPException(status_code= status.HTTP_404_NOT_FOUND, detail= str(e))
+    except Exception as e:
+        HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
 
 
 @router.get("/get/{id}", status_code= status.HTTP_200_OK)
