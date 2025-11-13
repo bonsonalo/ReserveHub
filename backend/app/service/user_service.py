@@ -9,7 +9,7 @@ from backend.app.schema import user_schema
 
 
 
-async def get_users_schema(db: AsyncSession):
+async def get_users_service(db: AsyncSession):
     user= await db.scalars(select(User))
 
     if not user:
