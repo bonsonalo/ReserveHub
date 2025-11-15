@@ -1,18 +1,18 @@
-from sqlalchemy import UUID, and_, exists, not_, select, func
+from sqlalchemy import and_, exists, not_, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import date
 from typing import Optional
-
+from uuid import UUID
 
 from backend.app.model.booking import Booking
 from backend.app.model.resource import Resource
 from backend.app.model.resource_availability import ResourceAvailability
-from backend.app.utils import resource_exist
+from backend.app.utils.resource_exist import resource_exist
 from backend.app.core.logger import logger
 
 
 
-async def get_resource_availabilty_by_id_service(resource_id: UUID, date: Optional[date], db: AsyncSession):
+async def get_resource_availabilty_by_id_service(resource_id: UUID, db: AsyncSession, date: Optional[date]= None):
 
     resource= await db.scalar(select(Resource).where(Resource.id == resource_id))
     resource_exist(resource)
