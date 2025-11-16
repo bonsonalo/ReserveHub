@@ -5,9 +5,11 @@ from datetime import date
 from starlette import status 
 
 from backend.app.core.config import user_dependency, admin_dependency, superadmin_dependency, db_dependency
+from backend.app.schema.resource_availability_schema import CreateResourceAvailability
 from backend.app.service.auth_service import authenticate_user
-from backend.app.service.resource_availability_service import get_resource_availabilty_by_id_service
+from backend.app.service.resource_availability_service import create_resource_availability_service, get_resource_availabilty_by_id_service
 from backend.app.core.logger import logger
+from backend.app.utils.authentication_check import authentication_check
 
 router= APIRouter(
     prefix= "/api/v1",
@@ -19,10 +21,10 @@ router= APIRouter(
 
 # GET /api/v1/resources/{id}/availability
 @router.get("/resource/{resource_id}/resource_availabilty")
-async def get_resource_availabilty_by_id(resource_id: UUID, date: Optional[date], current_user: user_dependency, db: db_dependency):
-    authenticate_user(current_user)
+async def get_resource_availabilty_by_id(resource_id: UUID, current_user: user_dependency, db: db_dependency, date: Optional[date]= Query(None)):
+    authentication_check(current_user)
     try:
-        return await get_resource_availabilty_by_id_service(resource_id, date, db)
+        return await get_resource_availabilty_by_id_service(resource_id, db, date)
     except ValueError as e:
         logger.error(str(e))
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -30,4 +32,14 @@ async def get_resource_availabilty_by_id(resource_id: UUID, date: Optional[date]
         logger.error(str(e))
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
             
+# POST /api/v1/resources/{id}/availability
 
+@router.post("/resource/{resource_id}/availability", status_code=status.HTTP_201_CREATED)
+async def create_resource_availability(resource_id: UUID, info: CreateResourceAvailability, current_user: admin_dependency, db: db_dependency):
+    authentication_check(admin_dependency)
+
+    try:
+        return await create_resource_availability_service(id, info, db)
+    except ValueError as e:
+        logger.error(str(e))
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
