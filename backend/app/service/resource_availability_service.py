@@ -7,6 +7,7 @@ from uuid import UUID
 from backend.app.model.booking import Booking
 from backend.app.model.resource import Resource
 from backend.app.model.resource_availability import ResourceAvailability
+from backend.app.schema.resource_availability_schema import CreateResourceAvailability
 from backend.app.utils.resource_exist import resource_exist
 from backend.app.core.logger import logger
 
@@ -44,3 +45,20 @@ async def get_resource_availabilty_by_id_service(resource_id: UUID, db: AsyncSes
         {"start_time": start, "end_point": end} for start, end in availabilties
     ]
     
+
+async def create_resource_availability_service(resource_id: UUID, info: CreateResourceAvailability, db: AsyncSession):
+    db_add= ResourceAvailability(
+        resource_id= resource_id,
+        recurrence= info.recurrence,
+        start_date= info.start_date,
+        end_date= info.end_date,
+        start_time= info.start_time,
+        end_time= info.end_time,
+        tz= info.tz,
+        is_exception= info.is_exception
+    )
+
+    db.add(db_add)
+    await db.commit()
+    await db.refresh(db_add)
+    return db_add
