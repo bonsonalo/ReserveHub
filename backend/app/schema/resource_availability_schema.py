@@ -13,7 +13,6 @@ class AvailabilityTime(BaseModel):
 
 
 class CreateResourceAvailability(BaseModel):
-    resource_id: UUID
     recurrence: list[dict[str, Any]]
     start_date: date
     end_date: date
