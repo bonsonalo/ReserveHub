@@ -4,7 +4,7 @@ from typing import Any
 import uuid
 from sqlalchemy.dialects.postgresql import JSONB
 from backend.app.core.database import Base
-from datetime import datetime, time, date
+from datetime import time, date
 
 class ResourceAvailability(Base):
     __tablename__= "resource_availability"
