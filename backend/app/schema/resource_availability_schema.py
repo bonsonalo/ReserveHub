@@ -21,3 +21,12 @@ class CreateResourceAvailability(BaseModel):
     tz: Optional[str]= "UTC"
     is_exception: bool
     
+
+class UpdatedTo(BaseModel):
+    recurrence: Optional[list[dict[str, Any]]]= None
+    start_date: Optional[date]= None
+    end_date: Optional[date]= None
+    start_time: Optional[time]= None
+    end_time: Optional[time]= None
+    tz: Optional[str]= "UTC"
+    is_exception: Optional[bool]= None
