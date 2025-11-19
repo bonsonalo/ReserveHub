@@ -22,7 +22,7 @@ class CreateResourceAvailability(BaseModel):
     is_exception: bool
     
 
-class UpdatedTo(BaseModel):
+class UpdateAvailabilityRequest(BaseModel):
     recurrence: Optional[list[dict[str, Any]]]= None
     start_date: Optional[date]= None
     end_date: Optional[date]= None
