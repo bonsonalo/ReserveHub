@@ -5,8 +5,8 @@ from datetime import date
 from starlette import status 
 
 from backend.app.core.config import user_dependency, admin_dependency, superadmin_dependency, db_dependency
-from backend.app.schema.resource_availability_schema import CreateResourceAvailability
-from backend.app.service.resource_availability_service import create_resource_availability_service, get_resource_availabilty_by_id_service
+from backend.app.schema.resource_availability_schema import CreateResourceAvailability, UpdateAvailabilityRequest
+from backend.app.service.resource_availability_service import create_resource_availability_service, get_resource_availabilty_by_id_service, patch_resource_availability_by_id_service
 from backend.app.core.logger import logger
 from backend.app.utils.authentication_check import authentication_check
 
@@ -42,3 +42,19 @@ async def create_resource_availability(resource_id: UUID, info: CreateResourceAv
     except ValueError as e:
         logger.error(str(e))
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
+    
+
+# PATCH /api/v1/resource-availabilities/{id}
+
+@router.patch("/resource-availabilities/{id}")
+async def patch_resource_availability_by_id(id: UUID, updated_to: UpdateAvailabilityRequest, current_user: superadmin_dependency, db: db_dependency):
+    authentication_check(current_user)
+
+    try:
+        return await patch_resource_availability_by_id_service(id, updated_to, db)
+    except FileExistsError as e:
+        logger.error("there is time overlap")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail= str(e))
+    
+
+
