@@ -6,7 +6,7 @@ from starlette import status
 
 from backend.app.core.config import user_dependency, admin_dependency, superadmin_dependency, db_dependency
 from backend.app.schema.resource_availability_schema import CreateResourceAvailability, UpdateAvailabilityRequest
-from backend.app.service.resource_availability_service import create_resource_availability_service, get_resource_availabilty_by_id_service, patch_resource_availability_by_id_service
+from backend.app.service.resource_availability_service import create_resource_availability_service, delete_resource_availability_by_id_service, get_resource_availabilty_by_id_service, patch_resource_availability_by_id_service
 from backend.app.core.logger import logger
 from backend.app.utils.authentication_check import authentication_check
 
@@ -56,5 +56,15 @@ async def patch_resource_availability_by_id(id: UUID, updated_to: UpdateAvailabi
         logger.error("there is time overlap")
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail= str(e))
     
+# DELETE /api/v1/resource-availabilities/{id}
 
+@router.delete("/resource_availabilities/{id}")
+async def delete_resource_availability_by_id(id: UUID, db:db_dependency, current_user: superadmin_dependency):
+    authentication_check(current_user)
+
+    try:
+        return await delete_resource_availability_by_id_service(id, db)
+    except Exception as e:
+        logger.error(str(e))
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
 
