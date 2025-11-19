@@ -104,4 +104,13 @@ async def patch_resource_availability_by_id_service(id: UUID, updated_data: Upda
     return availability
 
 
+#delete resource_availability by id
+
+async def delete_resource_availability_by_id_service(id: UUID, db: AsyncSession):
+    queried= db.scalar(select(ResourceAvailability).where(ResourceAvailability.id == id))
+
+    resource_exist(queried)
+    await db.delete(queried)
+    await db.commit()
+
 
