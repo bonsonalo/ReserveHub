@@ -15,9 +15,9 @@ class BookingStatus(str, sqlEnum):
 class CreateBooking(BaseModel):
     resource_id: UUID
     user_id: UUID
-    status: Optional[str]
+    status: Optional[str]= None
     time_range: TSTZRANGE
-    attendees: Optional[int]
-    data: Optional[JSONB]
-    is_recurring: Optional[bool]
+    attendees: Optional[int]= None
+    data: Optional[JSONB]= None
+    is_recurring: Optional[bool]= None
     recurrence_rule: str
