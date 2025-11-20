@@ -21,7 +21,7 @@ bcrypt_context= CryptContext(schemes= ["bcrypt"], deprecated= "auto")
 
 async def create_user_service(user: CreateUserRequest, db: AsyncSession):
     try:
-        validated_password= validate_password_strength(user.password)
+        validate_password_strength(user.password)
         existing_user= await db.scalar(select(User).where(User.email == user.email))
         if existing_user:
             raise ValueError("Email already registered")
@@ -55,8 +55,8 @@ async def authenticate_user(username: str, password: str, db: AsyncSession):
      return user
 
 
-def create_access_token(email: EmailStr, user_id: int, role: str, token_type: str, expires_delta: timedelta):
-    encode= {"sub": email, "id": str(user_id), "role": role, "token_type": token_type}
+def create_access_token(email: EmailStr, user_id: UUID, role: str, token_type: str, expires_delta: timedelta):
+    encode= {"sub": email, "id": user_id, "role": role, "token_type": token_type}
     expires= datetime.now(timezone.utc) + expires_delta
     encode.update({"exp": expires})
 
