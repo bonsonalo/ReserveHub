@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from starlette import status
 from uuid import UUID
 
-from backend.app.schema.booking_schema import CreateBooking
+from backend.app.schema.booking_schema import CreateBooking, UpdateRequest
 from backend.app.core.config import db_dependency, admin_dependency, user_dependency, superadmin_dependency
-from backend.app.service.booking_service import create_booking_service, get_booking_by_id_service, get_booking_service
+from backend.app.service.booking_service import create_booking_service, get_booking_by_id_service, get_booking_service, update_booking_service
 from backend.app.utils.authentication_check import authentication_check
 from backend.app.core.logger import logger
 
@@ -55,3 +55,14 @@ async def get_booking_by_id(booking_id: UUID, current_user: user_dependency, db:
     except Exception as e:
         logger.error(str(e))
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
+    
+
+# PATCH /api/v1/bookings/{id}    Owner/Admin/Staff            Update booking info (notes, metadata)
+@router.patch("update_booking/{booking_id}")
+async def update_booking(booking_id: UUID,to_update: UpdateRequest, current_user: admin_dependency, db: db_dependency):
+    authentication_check(current_user)
+    try:
+        return await update_booking_service(booking_id, to_update, db)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
+
