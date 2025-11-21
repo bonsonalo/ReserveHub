@@ -67,4 +67,5 @@ async def delete_resource_availability_by_id(id: UUID, db:db_dependency, current
     except Exception as e:
         logger.error(str(e))
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
+    
 
