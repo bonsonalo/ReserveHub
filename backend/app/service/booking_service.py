@@ -1,4 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
+from uuid import UUID
 
 from backend.app.model.booking import Booking
 from backend.app.schema.booking_schema import CreateBooking
@@ -23,3 +25,23 @@ async def create_booking_service(to_create: CreateBooking, db: AsyncSession):
     await db.refresh(db_add)
 
     return db_add
+
+
+
+async def get_booking_service(current_user, db: AsyncSession, user_id: UUID | None, resource_id: UUID | None, booking_status: str):
+
+    current_id= current_user.id
+    current_role= current_user.role
+    query= db.select(Booking)
+
+    if current_role not in ["admin", "superadmin"]:
+        query = query.where(Booking.user_id == current_id)
+    if user_id:
+        query = query.where(Booking.user_id == user_id)
+    if resource_id:
+        query = query.where(Booking.resource_id == resource_id)
+    if booking_status:
+        query= query.where(Booking.status == booking_status)
+
+    result= await db.scalars(query)
+    return result.all()
