@@ -1,9 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel
-from sqlalchemy import UUID, Enum as sqlEnum
+from sqlalchemy import Enum as sqlEnum
 from sqlalchemy.dialects.postgresql import TSTZRANGE, JSONB
 from enum import Enum
-
+from uuid import UUID
 
 class BookingStatus(str, sqlEnum):
     booked= "booked"
@@ -18,7 +18,7 @@ class CreateBooking(BaseModel):
     status: Optional[str]= None
     time_range: TSTZRANGE
     attendees: Optional[int]= None
-    data: Optional[JSONB]= None
+    data: Optional[dict]= None
     is_recurring: Optional[bool]= None
     recurrence_rule: str
 
