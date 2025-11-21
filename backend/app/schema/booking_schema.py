@@ -23,7 +23,7 @@ class CreateBooking(BaseModel):
     recurrence_rule: str
 
 
-class UpdateBooking(BaseModel):
+class UpdateRequest(BaseModel):
     status: Optional[str]= None
     attendees: Optional[int]= None
     data: Optional[JSONB]= None
