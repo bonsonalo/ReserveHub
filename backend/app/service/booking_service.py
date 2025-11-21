@@ -45,3 +45,17 @@ async def get_booking_service(current_user, db: AsyncSession, user_id: UUID | No
 
     result= await db.scalars(query)
     return result.all()
+
+async def get_booking_by_id_service(booking_id: UUID, current_user, db: AsyncSession):
+    current_role= current_user.role
+    current_id= current_user.id
+
+    query= db.select(Booking)
+
+    if current_role not in ["admin", "superadmin"]:
+        query= query.where((Booking.user_id == current_id) & (Booking.id == booking_id))
+    else:
+        query = query.where(Booking.id == booking_id)
+        
+    result = await db.scalars(query)
+    return await result.all()
