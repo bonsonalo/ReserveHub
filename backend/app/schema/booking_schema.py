@@ -21,3 +21,9 @@ class CreateBooking(BaseModel):
     data: Optional[JSONB]= None
     is_recurring: Optional[bool]= None
     recurrence_rule: str
+
+
+class UpdateBooking(BaseModel):
+    status: Optional[str]= None
+    attendees: Optional[int]= None
+    data: Optional[JSONB]= None
