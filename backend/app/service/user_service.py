@@ -72,6 +72,6 @@ async def delete_user_service(id, db):
     if not user:
         raise ValueError("could not find user with that id")
     user.archived = True
-    logger.info("sunccessfully archived")
+    logger.info("successfully archived")
     await db.commit()
     logger.info("soft delete successfull")
