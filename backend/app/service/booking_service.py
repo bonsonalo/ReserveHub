@@ -3,7 +3,8 @@ from typing import Optional
 from uuid import UUID
 
 from backend.app.model.booking import Booking
-from backend.app.schema.booking_schema import CreateBooking
+from backend.app.schema.booking_schema import CreateBooking, UpdateRequest
+from backend.app.utils.resource_exist import resource_exist
 
 
 
@@ -56,6 +57,24 @@ async def get_booking_by_id_service(booking_id: UUID, current_user, db: AsyncSes
         query= query.where((Booking.user_id == current_id) & (Booking.id == booking_id))
     else:
         query = query.where(Booking.id == booking_id)
-        
+
     result = await db.scalars(query)
     return await result.all()
+
+
+
+async def update_booking_service(booking_id: UUID, to_update: UpdateRequest, db: AsyncSession):
+    query= await db.scalar(Booking).where(Booking.id== booking_id)
+    resource_exist(query)
+
+    if to_update.attendees is not None:
+        query.attendees = to_update.attendees
+    if to_update.status is not None:
+        query.status = to_update.status
+    if to_update.data is not None:
+        query.data = to_update
+
+    await db.commit()
+    await db.refresh(query)
+
+    return query
