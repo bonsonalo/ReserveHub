@@ -55,7 +55,7 @@ async def authenticate_user(username: str, password: str, db: AsyncSession):
      return user
 
 
-def create_access_token(email: EmailStr, user_id: UUID, role: str, token_type: str, expires_delta: timedelta):
+def create_access_token(email: EmailStr, user_id, role: str, token_type: str, expires_delta: timedelta):
     encode= {"sub": email, "id": user_id, "role": role, "token_type": token_type}
     expires= datetime.now(timezone.utc) + expires_delta
     encode.update({"exp": expires})
