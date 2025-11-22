@@ -3,10 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 from uuid import UUID
 from sqlalchemy.dialects.postgresql import TSTZRANGE
+from psycopg2.extras import DateTimeTZRange
+from datetime import datetime
 
 
 from backend.app.model.booking import Booking
-from backend.app.schema.booking_schema import CreateBooking, UpdateRequest
+from backend.app.model.resource_availability import ResourceAvailability
+from backend.app.schema.booking_schema import CreateBooking, RescheduleBooking, UpdateRequest
 from backend.app.utils.resource_exist import resource_exist
 
 
@@ -85,4 +88,40 @@ async def update_booking_service(booking_id: UUID, to_update: UpdateRequest, db:
     await db.commit()
     await db.refresh(query)
 
+    return query
+
+
+
+async def reschedule_booking_time_service(booking_id: UUID, reschedule_booking: RescheduleBooking, db:AsyncSession):
+
+    query= db.scalar(select(Booking).where(Booking.id == booking_id))
+
+    if reschedule_booking.start_time >= reschedule_booking.end_time:
+        raise False
+    
+    new_range= TSTZRANGE(reschedule_booking.start_time, reschedule_booking.end_time, "[)")
+
+    booking_conflict= db.scalar(select(Booking).where(
+        Booking.resource_id == query.resource_id,
+        Booking.id != query.id,
+        Booking.status == "cancelled",
+        Booking.time_range.op("&&")(new_range)
+    ))
+
+    if booking_conflict:
+        return False
+
+
+    availabilities= db.scalars(select(ResourceAvailability).where(ResourceAvailability.resource_id == query.resource_id)).all()
+
+
+    for avail in availabilities:
+        avail_start= datetime.combine(avail.start_date, avail.start_time)
+        avail_end= datetime.combine(avail.end_date, avail.end_time)
+        if reschedule_booking.start_time < avail_end and avail_start < reschedule_booking.end_time:
+            return False
+
+    query.time_range= new_range
+    await db.commit()
+    await db.refresh(query)
     return query
