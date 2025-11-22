@@ -58,7 +58,8 @@ class Booking(Base):
         onupdate= func.now()
     )
     canceled_at: Mapped[datetime]= mapped_column(
-        TIMESTAMP(timezone= True)
+        TIMESTAMP(timezone= True),
+        nullable= True
     )
     is_recurring: Mapped[bool]= mapped_column(
         Boolean,
