@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from starlette import status
 from uuid import UUID
 
-from backend.app.schema.booking_schema import CreateBooking, UpdateRequest
+from backend.app.schema.booking_schema import CreateBooking, RescheduleBooking, UpdateRequest
 from backend.app.core.config import db_dependency, admin_dependency, user_dependency, superadmin_dependency
-from backend.app.service.booking_service import create_booking_service, get_booking_by_id_service, get_booking_service, update_booking_service
+from backend.app.service.booking_service import create_booking_service, get_booking_by_id_service, get_booking_service, reschedule_booking_time_service, update_booking_service
 from backend.app.utils.authentication_check import authentication_check
 from backend.app.core.logger import logger
 
@@ -28,7 +28,7 @@ async def create_booking(to_create: CreateBooking, current_user: admin_dependenc
         return await create_booking_service(to_create, db)
     except ValueError as e:
         logger.error(str(e))
-        HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
 
 
 # GET /api/v1/bookings
@@ -40,7 +40,7 @@ async def get_bookings(current_user: user_dependency, db: db_dependency, user_id
     try:
         return await get_booking_service(current_user, db, user_id, resource_id, booking_status)
     except ValueError as e:
-        logger.erro(str(e))
+        logger.error(str(e))
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
     
 
@@ -58,11 +58,27 @@ async def get_booking_by_id(booking_id: UUID, current_user: user_dependency, db:
     
 
 # PATCH /api/v1/bookings/{id}    Owner/Admin/Staff            Update booking info (notes, metadata)
-@router.patch("update_booking/{booking_id}")
+@router.patch("/update_booking/{booking_id}")
 async def update_booking(booking_id: UUID,to_update: UpdateRequest, current_user: admin_dependency, db: db_dependency):
     authentication_check(current_user)
     try:
         return await update_booking_service(booking_id, to_update, db)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
+    
+# POST /api/v1/bookings/{id}/reschedule
+
+@router.post("/{booking_id}/reschedule")
+async def reschedule_booking_time(booking_id: UUID, reschedule_booking: RescheduleBooking, current_user: admin_dependency, db: db_dependency):
+    authentication_check(current_user)
+
+    try:
+        return await reschedule_booking_time_service(booking_id, reschedule_booking, db)
+    except FileExistsError as e:
+        logger.error(str(e))
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail= str(e))
+    except Exception as e:
+        logger.error(str(e))
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
+
 
