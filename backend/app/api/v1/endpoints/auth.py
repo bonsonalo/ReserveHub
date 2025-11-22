@@ -42,8 +42,8 @@ async def login_for_access_token(user_form: Annotated[OAuth2PasswordRequestForm,
      if not user:
           logger.error("could not login into account")
           raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="could not validate user")
-     access_token= create_access_token(user.email, user.id, user.role, "access", timedelta(minutes=20))
-     refresh_token= create_access_token(user.email, user.id, user.role, "refresh", timedelta(days=30))
+     access_token= create_access_token(user.email, str(user.id), user.role, "access", timedelta(minutes=20))
+     refresh_token= create_access_token(user.email, str(user.id), user.role, "refresh", timedelta(days=30))
 
      return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 
