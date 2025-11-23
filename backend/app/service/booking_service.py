@@ -94,14 +94,14 @@ async def update_booking_service(booking_id: UUID, to_update: UpdateRequest, db:
 
 async def reschedule_booking_time_service(booking_id: UUID, reschedule_booking: RescheduleBooking, db:AsyncSession):
 
-    query= db.scalar(select(Booking).where(Booking.id == booking_id))
+    query= await db.scalar(select(Booking).where(Booking.id == booking_id))
 
     if reschedule_booking.start_time >= reschedule_booking.end_time:
         raise False
     
-    new_range= TSTZRANGE(reschedule_booking.start_time, reschedule_booking.end_time, "[)")
+    new_range= func.tstzrange(reschedule_booking.start_time, reschedule_booking.end_time, "[)")
 
-    booking_conflict= db.scalar(select(Booking).where(
+    booking_conflict= await db.scalar(select(Booking).where(
         Booking.resource_id == query.resource_id,
         Booking.id != query.id,
         Booking.status == "cancelled",
@@ -112,7 +112,8 @@ async def reschedule_booking_time_service(booking_id: UUID, reschedule_booking: 
         return False
 
 
-    availabilities= db.scalars(select(ResourceAvailability).where(ResourceAvailability.resource_id == query.resource_id)).all()
+    availabilities_object= await db.scalars(select(ResourceAvailability).where(ResourceAvailability.resource_id == query.resource_id))
+    availabilities= availabilities_object.all()
 
 
     for avail in availabilities:
