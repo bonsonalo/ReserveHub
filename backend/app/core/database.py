@@ -11,7 +11,7 @@ load_dotenv()
 DB_URL= os.getenv("DB_URL")
 
 
-engine= create_async_engine(DB_URL)
+engine= create_async_engine(DB_URL, connect_args={"ssl": "require"})
 
 AsyncSessionLocal= async_sessionmaker(
     bind=engine,
