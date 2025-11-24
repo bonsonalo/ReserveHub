@@ -80,5 +80,5 @@ async def reschedule_booking_time(booking_id: UUID, reschedule_booking: Reschedu
     except Exception as e:
         logger.error(str(e))
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= str(e))
-
+    
 
