@@ -4,7 +4,7 @@ from mangum import Mangum
 
 from backend.app.core.database import init_db
 from backend.app.api.v1.routes import routers
-
+from backend.app.core.middleware import register_middleware
 
 
 @asynccontextmanager
@@ -14,6 +14,10 @@ async def lifespan(app: FastAPI):
 
 
 app= FastAPI(title= "Booking API", lifespan= lifespan)
+
+register_middleware(app)
+
+
 app.include_router(routers)
 
 handler= Mangum(app)
