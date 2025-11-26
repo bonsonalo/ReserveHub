@@ -20,6 +20,12 @@ async def register_middleware(app: FastAPI):
         print(message)
         return response
 
-    
+    app.add_middleware(
+            CORSMiddleware,
+            allow_origins= ["*"],
+            allow_methods= ["*"],
+            allow_headers= ["*"],
+            allow_credentials= True
+    )
                        
 
