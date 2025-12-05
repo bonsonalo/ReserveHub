@@ -64,13 +64,14 @@ def role_required(allowed_roles: List[str]):
 
 
 user_dependency= Annotated[dict, Depends(role_required(["user", "admin", "superadmin"]))]
-admin_dependency= Annotated[dict, Depends(role_required(["admin", "superadmin"]))]
+admin_dependency= Annotated[dict, Depends((["admin", "superadmin"]))]
 superadmin_dependency= Annotated[dict, Depends(role_required(["superadmin"]))]
 
 MAIL_PASS = os.getenv("MAIL_PASS")
+MAIL_USERNAME= os.getenv("MAIL_USERNAME")
 
 conf= ConnectionConfig(
-    MAIL_USERNAME= "7eb5e01dfec269",
+    MAIL_USERNAME= MAIL_USERNAME,
     MAIL_PASSWORD= MAIL_PASS,
     MAIL_FROM= "bonson2468@gmail.com",
     MAIL_PORT= "2525",
