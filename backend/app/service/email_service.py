@@ -16,8 +16,8 @@ async def send_welcome_email(recipient_email: list[EmailStr]):
     message= MessageSchema(
         subject= "Welcome to our platform",
         recipients= [recipient_email],
-        body= "Heyyyy",
-        subtype= html
+        body= html,
+        subtype= "html"
     )
 
     await fm.send_message(message)
