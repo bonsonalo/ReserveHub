@@ -5,6 +5,7 @@ from pydantic import EmailStr
 from sqlalchemy import select
 from backend.app.model.user import User
 from backend.app.schema.auth_schema import CreateUserRequest
+from backend.app.service.email_service import send_welcome_email
 from backend.app.utils import is_new_email
 from backend.app.utils.password_strength import validate_password_strength
 from backend.app.core.config import SECRET_KEY, ALGORITHM
@@ -42,6 +43,8 @@ async def create_user_service(user: CreateUserRequest, db: AsyncSession):
     db.add(user_request_model)
     await db.commit()
     await db.refresh(user_request_model)
+
+    await send_welcome_email(user.email)
 
 
 
