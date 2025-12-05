@@ -1,8 +1,8 @@
 from typing import List
-from pydantic import BaseModel, NameEmail
+from pydantic import BaseModel, EmailStr
 
 
 
 
 class EmailSchema(BaseModel):
-    email: List[NameEmail]
+    email: List[EmailStr]
