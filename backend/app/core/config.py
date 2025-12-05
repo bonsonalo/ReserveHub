@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from starlette import status
 from uuid import UUID
+from fastapi_mail import ConnectionConfig
 
 from backend.app.core.database import AsyncSessionLocal
 from backend.app.core.logger import logger
@@ -65,3 +66,18 @@ def role_required(allowed_roles: List[str]):
 user_dependency= Annotated[dict, Depends(role_required(["user", "admin", "superadmin"]))]
 admin_dependency= Annotated[dict, Depends(role_required(["admin", "superadmin"]))]
 superadmin_dependency= Annotated[dict, Depends(role_required(["superadmin"]))]
+
+MAIL_PASS = os.getenv("MAIL_PASS")
+
+conf= ConnectionConfig(
+    MAIL_USERNAME= "7eb5e01dfec269",
+    MAIL_PASSWORD= MAIL_PASS,
+    MAIL_FROM= "bonson2468@gmail.com",
+    MAIL_PORT= "2525",
+    MAIL_SERVER= "sandbox.smtp.mailtrap.io",
+    MAIL_FROM_NAME= "my_app",
+    MAIL_STARTTLS= True,
+    MAIL_SSL_TLS= False,
+    USE_CREDENTIALS= True,
+    VALIDATE_CERTS= True
+    )
