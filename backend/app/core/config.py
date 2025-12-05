@@ -64,7 +64,7 @@ def role_required(allowed_roles: List[str]):
 
 
 user_dependency= Annotated[dict, Depends(role_required(["user", "admin", "superadmin"]))]
-admin_dependency= Annotated[dict, Depends((["admin", "superadmin"]))]
+admin_dependency= Annotated[dict, Depends(role_required(["admin", "superadmin"]))]
 superadmin_dependency= Annotated[dict, Depends(role_required(["superadmin"]))]
 
 MAIL_PASS = os.getenv("MAIL_PASS")
