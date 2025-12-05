@@ -17,7 +17,7 @@ from backend.app.core.logger import logger
 
 
 router = APIRouter(
-    prefix= "/auth",
+    prefix= "/api/v1/auth",
     tags= ["auth"]
 )
 
@@ -31,7 +31,7 @@ async def create_user(user: CreateUserRequest, db: db_dependency):
          return await create_user_service(user, db)
     except ValueError as e:
          logger.error(str(e))
-         raise HTTPException(status_code= status.HTTP_400_BAD_REQUEST, detail= "password should include uppercase letter, lowercase letter, special letter and number")
+         raise HTTPException(status_code= status.HTTP_400_BAD_REQUEST, detail= str(e))
 
 
 # for login
