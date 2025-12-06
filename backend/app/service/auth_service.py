@@ -3,6 +3,8 @@ from uuid import UUID
 import jwt
 from pydantic import EmailStr
 from sqlalchemy import select
+from fastapi import BackgroundTasks
+
 from backend.app.model.user import User
 from backend.app.schema.auth_schema import CreateUserRequest
 from backend.app.service.email_service import send_welcome_email
@@ -20,7 +22,7 @@ from passlib.context import CryptContext
 bcrypt_context= CryptContext(schemes= ["bcrypt"], deprecated= "auto")
 
 
-async def create_user_service(user: CreateUserRequest, db: AsyncSession):
+async def create_user_service(user: CreateUserRequest, bg_task: BackgroundTasks, db: AsyncSession):
     try:
         validate_password_strength(user.password)
         existing_user= await db.scalar(select(User).where(User.email == user.email))
@@ -44,7 +46,9 @@ async def create_user_service(user: CreateUserRequest, db: AsyncSession):
     await db.commit()
     await db.refresh(user_request_model)
 
-    await send_welcome_email(user.email)
+    bg_task.add_task(send_welcome_email, user.email) 
+
+    return user_request_model
 
 
 
