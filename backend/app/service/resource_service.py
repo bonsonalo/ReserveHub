@@ -1,7 +1,9 @@
-from fastapi import Query
+from fastapi import Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import UUID, and_, exists, func, not_, select
-
+from redis import Redis
+import httpx
+import json
 
 from backend.app.model.booking import Booking
 from backend.app.model.resource import Resource
@@ -15,13 +17,19 @@ from backend.app.utils.resource_exist import resource_exist
 
 
 async def get_all_resources_service(db: AsyncSession,
+                                    request: Request,
                                     sort_by: str,
-                                    order: str,
+                                    order: str, 
                                     capacity: str | None,
                                     resource_type: resource_schema.ResourceType | None,
-                                    available: bool= Query(False)                                    
+                                    available: bool= Query(False)                                   
                                     ):
     
+    cache_key= f"resources: {sort_by}: {order}: {capacity}: {resource_type}: {available}"
+    value= await request.app.state.redis.get(cache_key) 
+    if value is not None:
+        return json.loads(value)
+       
     query= select(Resource)
 
     if capacity:
@@ -72,6 +80,10 @@ async def get_all_resources_service(db: AsyncSession,
     if not final_resources:
         logger.warning("No resource found for the given filter")
         return LookupError("no products found")
+
+    await request.app.state.redis.set(cache_key, json.dumps(final_resources), ex= 60)
+
+
     logger.info(f"fetched {len(final_resources)} resources successfully")
     return final_resources
 
