@@ -1,6 +1,6 @@
 from datetime import timedelta
 from uuid import UUID
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import BackgroundTasks, Depends, APIRouter, HTTPException
 
 from starlette import status
 from passlib.context import CryptContext
@@ -25,10 +25,10 @@ router = APIRouter(
 
 # sign up
 @router.post("/signup", status_code= status.HTTP_201_CREATED)
-async def create_user(user: CreateUserRequest, db: db_dependency):
+async def create_user(user: CreateUserRequest, bg_task: BackgroundTasks, db: db_dependency):
     try:
          logger.info("going to create user")
-         return await create_user_service(user, db)
+         return await create_user_service(user, bg_task, db)
     except ValueError as e:
          logger.error(str(e))
          raise HTTPException(status_code= status.HTTP_400_BAD_REQUEST, detail= str(e))
