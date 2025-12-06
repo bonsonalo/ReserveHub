@@ -1,7 +1,8 @@
 from typing import Optional
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Request
 from uuid import UUID
 from starlette import status
+
 
 from backend.app.model.resource import Resource
 from backend.app.core.config import user_dependency, admin_dependency, superadmin_dependency, db_dependency
@@ -38,6 +39,7 @@ async def create_resource(info: resource_schema.CreateResource, current_user: ad
 @router.get("/get_all", status_code= status.HTTP_200_OK)
 async def get_all_resources(db: db_dependency,
                             current_user: user_dependency,
+                            request: Request,
                             sort_by: str= Query("id"),
                             order: str= Query("asc"),
                             capacity: Optional[str]= Query(None),
@@ -46,6 +48,7 @@ async def get_all_resources(db: db_dependency,
                             ):
     try:
         return await get_all_resources_service(db,
+                                               request,
                                                sort_by,
                                                order,
                                                capacity,
