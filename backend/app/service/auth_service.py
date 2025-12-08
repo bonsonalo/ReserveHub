@@ -5,6 +5,7 @@ from pydantic import EmailStr
 from sqlalchemy import select
 from fastapi import BackgroundTasks
 
+from backend.app.core.celery_app import send_welcome_email_task
 from backend.app.model.user import User
 from backend.app.schema.auth_schema import CreateUserRequest
 from backend.app.service.email_service import send_welcome_email
@@ -46,7 +47,7 @@ async def create_user_service(user: CreateUserRequest, bg_task: BackgroundTasks,
     await db.commit()
     await db.refresh(user_request_model)
 
-    bg_task.add_task(send_welcome_email, user.email) 
+    send_welcome_email_task.delay(user.email)    
 
     return user_request_model
 
