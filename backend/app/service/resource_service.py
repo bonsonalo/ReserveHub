@@ -1,7 +1,7 @@
 from fastapi import Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import UUID, and_, exists, func, not_, select
-from redis import Redis
+import redis.asyncio as redis
 import httpx
 import json
 
@@ -80,12 +80,13 @@ async def get_all_resources_service(db: AsyncSession,
     if not final_resources:
         logger.warning("No resource found for the given filter")
         return LookupError("no products found")
+    final_serializable= [resource_schema.ReturnResourceById.model_validate(r).model_dump() for r in final_resources]
 
-    await request.app.state.redis.set(cache_key, json.dumps(final_resources), ex= 60)
+    await request.app.state.redis.set(cache_key, json.dumps(final_serializable), ex= 60)
 
 
-    logger.info(f"fetched {len(final_resources)} resources successfully")
-    return final_resources
+    logger.info(f"fetched {len(final_serializable)} resources successfully")
+    return final_serializable
 
 
 
