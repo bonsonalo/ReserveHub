@@ -3,7 +3,7 @@ from backend.app.core.config import conf
 from pydantic import EmailStr
 
 
-fm = FastMail(conf)
+mail = FastMail(conf)
 
 
 async def send_welcome_email(recipient_email: list[EmailStr]):
@@ -20,4 +20,4 @@ async def send_welcome_email(recipient_email: list[EmailStr]):
         subtype= "html"
     )
 
-    await fm.send_message(message)
+    await mail.send_message(message)
