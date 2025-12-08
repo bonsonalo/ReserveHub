@@ -19,6 +19,10 @@ class ReturnResourceById(BaseModel):
     location: str
     attributes: Optional[dict[str, Any]]= None
 
+    model_config= {
+        'from_attributes': True
+    }
+
 class CreateResource(BaseModel):
     type: ResourceType
     code: str
