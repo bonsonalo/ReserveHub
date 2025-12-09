@@ -2,18 +2,20 @@ from fastapi import Depends, HTTPException
 from typing import Annotated, List
 from sqlalchemy.ext.asyncio import AsyncSession
 from dotenv import load_dotenv
+
 import os
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from starlette import status
 from uuid import UUID
-from fastapi_mail import ConnectionConfig
+
+load_dotenv()
 
 from backend.app.core.database import AsyncSessionLocal
 from backend.app.core.logger import logger
 
 
-load_dotenv()
+
 
 
 SECRET_KEY= os.getenv("SECRET_KEY")
@@ -67,18 +69,3 @@ user_dependency= Annotated[dict, Depends(role_required(["user", "admin", "supera
 admin_dependency= Annotated[dict, Depends(role_required(["admin", "superadmin"]))]
 superadmin_dependency= Annotated[dict, Depends(role_required(["superadmin"]))]
 
-MAIL_PASS = os.getenv("MAIL_PASS")
-MAIL_USERNAME= os.getenv("MAIL_USERNAME")
-
-conf= ConnectionConfig(
-    MAIL_USERNAME= MAIL_USERNAME,
-    MAIL_PASSWORD= MAIL_PASS,
-    MAIL_FROM= "bonson2468@gmail.com",
-    MAIL_PORT= "2525",
-    MAIL_SERVER= "sandbox.smtp.mailtrap.io",
-    MAIL_FROM_NAME= "my_app",
-    MAIL_STARTTLS= True,
-    MAIL_SSL_TLS= False,
-    USE_CREDENTIALS= True,
-    VALIDATE_CERTS= True
-    )
