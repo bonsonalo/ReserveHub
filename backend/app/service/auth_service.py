@@ -48,6 +48,7 @@ async def create_user_service(user: CreateUserRequest, bg_task: BackgroundTasks,
     await db.refresh(user_request_model)
 
     send_welcome_email_task.delay(user.email)    
+    print("Email sent")
 
     return user_request_model
 
