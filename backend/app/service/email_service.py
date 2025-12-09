@@ -1,5 +1,5 @@
 from fastapi_mail import FastMail, MessageSchema, MessageType
-from backend.app.core.config import conf
+from backend.app.core.email_config import conf
 from pydantic import EmailStr
 
 
