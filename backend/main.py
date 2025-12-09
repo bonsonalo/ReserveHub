@@ -6,7 +6,7 @@ import httpx
 
 from backend.app.core.database import init_db
 from backend.app.api.v1.routes import routers
-from backend.app.core.middleware import register_middleware
+from backend.app.core.middleware import AdvancedMiddleware, register_middleware
 
 
 @asynccontextmanager
@@ -22,6 +22,7 @@ async def lifespan(app: FastAPI):
 app= FastAPI(title= "Booking API", lifespan= lifespan)
 
 register_middleware(app)
+app.add_middleware(AdvancedMiddleware)
 
 
 app.include_router(routers)
