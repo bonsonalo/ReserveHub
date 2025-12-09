@@ -6,6 +6,11 @@ from pydantic import EmailStr
 from backend.app.service.email_service import send_welcome_email
 from backend.app.service.email_service import mail
 from asgiref.sync import async_to_sync
+from dotenv import load_dotenv
+load_dotenv()
+
+
+
 
 celery_app= Celery(
     "reservehub-worker",
